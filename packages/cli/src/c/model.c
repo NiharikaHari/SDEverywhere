@@ -82,17 +82,74 @@ void setConstantOverridesFromBuffers(double* constantValues, int32_t* constantIn
   size_t constantCount = (size_t)constantIndices[indexBufferOffset++];
 
   for (size_t i = 0; i < constantCount; i++) {
+    
     size_t varIndex = (size_t)constantIndices[indexBufferOffset++];
+
     size_t subCount = (size_t)constantIndices[indexBufferOffset++];
-    size_t* subIndices;
+
+    size_t* subIndices = NULL;
+
     if (subCount > 0) {
-      subIndices = (size_t*)(constantIndices + indexBufferOffset);
+      subIndices = malloc(subCount * sizeof(size_t));
+      // Print raw subIndices values (interpreted)
+      for (size_t j = 0; j < subCount; j++) {
+        subIndices[j] = (size_t)constantIndices[indexBufferOffset + j];
+      }
       indexBufferOffset += subCount;
-    } else {
-      subIndices = NULL;
     }
+
     double value = constantValues[valueBufferOffset++];
+
     setConstant(varIndex, subIndices, value);
+
+    // free after use
+    if (subIndices != NULL) {
+      free(subIndices);
+    }
+  }
+}
+
+void setLookupFromBuffers(double* values, int32_t* indices) {
+
+  if (!values || !indices) return;
+
+
+   for(size_t i = 0; i < 10; i++) {
+    fprintf(stderr, "indices[%d] = %d\n", i, indices[i]);
+  }
+
+  size_t idxOffset = 0;
+  size_t valOffset = 0;
+
+  size_t count = indices[idxOffset++];
+
+  for (size_t i = 0; i < count; i++) {
+
+    size_t varIndex = indices[idxOffset++];
+    size_t subCount = indices[idxOffset++];
+
+    size_t subIndicesLocal[10];
+    for (size_t j = 0; j < subCount; j++) {
+      subIndicesLocal[j] = (size_t)indices[idxOffset++];
+      fprintf(stderr, "subIndicesLocal[%d] = %d\n", j, subIndicesLocal[j]);
+    }
+
+    size_t numPoints = indices[idxOffset++];
+
+    double* points = &values[valOffset];
+    valOffset += numPoints;
+
+    fprintf(stderr, "varIndex = %d\n", varIndex);
+    fprintf(stderr, "subCount = %d\n", subCount);
+    fprintf(stderr, "numPoints = %d\n", numPoints);
+    for (size_t j = 0; j < numPoints; j++) {
+      fprintf(stderr, "points[%d] = %f \t", j, points[j]);
+    }
+
+    setLookup(varIndex,
+              subCount > 0 ? subIndicesLocal : NULL,
+              points,
+              numPoints);
   }
 }
 
@@ -123,7 +180,8 @@ void setConstantOverridesFromBuffers(double* constantValues, int32_t* constantIn
  * values.  See above for details on the expected format.
  */
 void runModel(double* inputs, double* outputs) {
-  runModelWithBuffers(inputs, NULL, outputs, NULL, NULL, NULL);
+  runModelWithBuffers(inputs, NULL, outputs, NULL, NULL, NULL, NULL, NULL);
+  // runModelWithBuffers(inputs, NULL, outputs, NULL, NULL, NULL);
 }
 
 /**
@@ -204,12 +262,16 @@ void runModel(double* inputs, double* outputs) {
  * to override.  Pass NULL if not overriding any constants.  See above for details on
  * the expected format.
  */
-void runModelWithBuffers(double* inputs, int32_t* inputIndices, double* outputs, int32_t* outputIndices, double* constants, int32_t* constantIndices) {
+// void runModelWithBuffers(double* inputs, int32_t* inputIndices, double* outputs, int32_t* outputIndices, double* constants, int32_t* constantIndices) {
+void runModelWithBuffers(double* inputs, int32_t* inputIndices, double* outputs, int32_t* outputIndices, double* constants, int32_t* constantIndices, double* lookups, int32_t* lookupIndices) {
   outputBuffer = outputs;
   outputIndexBuffer = outputIndices;
   initConstants();
   if (constants != NULL && constantIndices != NULL) {
     setConstantOverridesFromBuffers(constants, constantIndices);
+  }
+  if (lookups != NULL && lookupIndices != NULL) {
+    setLookupFromBuffers(lookups, lookupIndices);
   }
   if (inputs != NULL) {
     setInputs(inputs, inputIndices);

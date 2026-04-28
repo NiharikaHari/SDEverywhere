@@ -48,6 +48,7 @@ export let exec = (model, opts) => {
     outputPathname = path.join(outputDirname, `${modelName}.txt`)
   }
   let exitCode = execCmd(`${modelCmd} >${outputPathname}`)
+  console.log(`${modelCmd} >${outputPathname}`)
   if (exitCode > 0) {
     process.exit(exitCode)
   }

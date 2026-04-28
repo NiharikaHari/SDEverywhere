@@ -139,7 +139,7 @@ void __delete_lookup(Lookup* lookup) {
 void __print_lookup(Lookup* lookup) {
   if (lookup) {
     for (size_t i = 0; i < lookup->active_size; i++) {
-      printf("(%g, %g)\n", *(lookup->active_data + 2 * i), *(lookup->active_data + 2 * i + 1));
+      fprintf(stderr,"(%g, %g)\n", *(lookup->active_data + 2 * i), *(lookup->active_data + 2 * i + 1));
     }
   }
 }
