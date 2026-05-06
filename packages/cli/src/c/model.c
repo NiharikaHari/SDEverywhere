@@ -113,11 +113,6 @@ void setLookupFromBuffers(double* values, int32_t* indices) {
 
   if (!values || !indices) return;
 
-
-   for(size_t i = 0; i < 10; i++) {
-    fprintf(stderr, "indices[%d] = %d\n", i, indices[i]);
-  }
-
   size_t idxOffset = 0;
   size_t valOffset = 0;
 
@@ -131,20 +126,12 @@ void setLookupFromBuffers(double* values, int32_t* indices) {
     size_t subIndicesLocal[10];
     for (size_t j = 0; j < subCount; j++) {
       subIndicesLocal[j] = (size_t)indices[idxOffset++];
-      fprintf(stderr, "subIndicesLocal[%d] = %d\n", j, subIndicesLocal[j]);
     }
 
     size_t numPoints = indices[idxOffset++];
 
     double* points = &values[valOffset];
-    valOffset += numPoints;
-
-    fprintf(stderr, "varIndex = %d\n", varIndex);
-    fprintf(stderr, "subCount = %d\n", subCount);
-    fprintf(stderr, "numPoints = %d\n", numPoints);
-    for (size_t j = 0; j < numPoints; j++) {
-      fprintf(stderr, "points[%d] = %f \t", j, points[j]);
-    }
+    valOffset += numPoints * 2;
 
     setLookup(varIndex,
               subCount > 0 ? subIndicesLocal : NULL,

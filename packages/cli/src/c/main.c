@@ -364,8 +364,11 @@ static size_t parseLookupCSV(
     // Remove newline character at end of line
     line[strcspn(line, "\n")] = '\0';
 
+    // Define pointer for line tokens
+    char *lineTokenPtr;
+
     // First token: "Variable[subs]"
-    char* token = strtok(line, ",");
+    char* token = strtok_r(line, ",", &lineTokenPtr);
     if (!token) continue; // skip malformed lines
 
     // -----------------------------
@@ -390,8 +393,11 @@ static size_t parseLookupCSV(
       char* end = strchr(subPart, ']');
       if (end) *end = '\0';
 
+      // Define pointer for variable sub tokens
+      char *subTokensPtr;
+
       // Parse comma-separated subscript names
-      char* subTok = strtok(subPart, ",");
+      char* subTok = strtok_r(subPart, ",", &subTokensPtr);
       while (subTok) {
 
         // Trim leading spaces
@@ -404,7 +410,7 @@ static size_t parseLookupCSV(
         // Store cleaned subscript
         strcpy(subNames[numSubs++], subTok);
 
-        subTok = strtok(NULL, ",");
+        subTok = strtok_r(NULL, ",", &subTokensPtr);
       }
 
     } else {
@@ -481,8 +487,6 @@ static size_t parseLookupCSV(
 
       subIndicesLocal[i] = (size_t)idx;
 
-      // Debug log
-      fprintf(stderr, "Mapped subscript '%s' → %d\n", subNames[i], idx);
     }
 
     // Skip this row if subscripts invalid
@@ -500,16 +504,13 @@ static size_t parseLookupCSV(
     double tempPoints[100000];
 
     // Read remaining tokens (values)
-    while ((token = strtok(NULL, ","))) {
+    while ((token = strtok_r(NULL, ",", &lineTokenPtr))) {
       tempPoints[numPoints++] = atof(token);
     }
 
-    // You are treating each point as (index, value) pair
-    numPoints *= 2;
-
     // Safety check
-    if (numPoints >= 100000) {
-      fprintf(stderr, "Too many lookup points (max 100000)\n");
+    if (numPoints >= 50000) {
+      fprintf(stderr, "Too many lookup points (max 50000)\n");
       break;
     }
 
