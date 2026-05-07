@@ -21,7 +21,7 @@ static const char* member_subscripts[] = {"M1", "M2", "M3", "M4", "M5", "M6", "M
 static const char* bank_subscripts[] = {"B1", "B2", "B3", "B4", "B5"};
 static const char* loan_types_subscripts[] = {"L1", "L2", "L3", "L4", "L5"};
 static const char* food_groups_subscripts[] = {"Cereals Millets", "Pulses", "Milk", "Roots", "Leafy vegetables", "Vegetables", "Fruits", "Sugar", "Fat"};
-static const char* expenditure_subscripts[] = {"Groceries", "Cooked Food", "Education", "House", "Health", "Transport", "Electricity", "Water", "Sanitation", "Waste Collection", "Cooking fuel", "Internet and communication", "Loan Repayment", "Other", "Subsidized item payment", "Appliances", "Insurance premiums", "Repair and maintenance", "Vacations and social functions", "Work", "Agriculture", "College", "Clothing"};
+static const char* expenditure_subscripts[] = {"Groceries", "Cooked Food", "Education", "House", "Health", "Transport", "Electricity", "Water", "Sanitation", "Waste Collection", "Cooking fuel", "Internet and communication", "Loan Repayment", "Other", "Subsidized item payment", "Appliances", "Insurance premiums", "Repair and maintenance", "Vacations and social functions", "Work", "Agriculture", "College", "Clothing", "Investments"};
 static const char* dsd_subscripts[] = {"D0", "D1", "D2", "D3", "D4", "D5"};
 static const char* dws_subscripts[] = {"S1", "S2", "S3", "S4", "S5"};
 
@@ -45,13 +45,13 @@ static const VariableMapping variableMappings[] = {
   {"Borrowings", 7, 1, NULL}, // loan_types dimension
   {"calorie_content_food", 8, 1, NULL}, // food_groups dimension
   {"Cash Transfer", 9, 0, NULL},
-  {"Cost of Food Constants", 10, 1, NULL}, // food_groups dimension
-  {"Debt Multiplier", 11, 1, NULL}, // loan_types dimension
+  {"Check", 10, 2, NULL}, // member x dws dimensions
+  {"Cost of Food Constants", 11, 1, NULL}, // food_groups dimension
   {"deposits", 12, 1, NULL}, // bank dimension
-  {"disability_weights_state", 13, 2, NULL}, // member x dws dimensions
-  {"disease_hospital_expenditure_demand_constants", 14, 2, NULL}, // member x dws dimensions
-  {"disease_medicine_expenditure_demand_constants", 15, 2, NULL}, // member x dws dimensions
-  {"disease_state_duration", 16, 2, NULL}, // member x dsd dimensions
+  {"Disability Weights State", 13, 2, NULL}, // member x dws dimensions
+  {"Disease Hospital Expenditure Demand Constants", 14, 2, NULL}, // member x dws dimensions
+  {"Disease Medicine Expenditure Demand Constants", 15, 2, NULL}, // member x dws dimensions
+  {"Disease State Duration", 16, 2, NULL}, // member x dsd dimensions
   {"education_subsidy", 17, 0, NULL},
   {"Expenditure Constants", 18, 1, NULL}, // expenditure dimension
   {"FINAL TIME", 19, 0, NULL},
@@ -247,7 +247,8 @@ static size_t parseCINFile(const char* cinFilePath, double** constantValues, int
           dimIndex = 3; // food_groups
         } else if (strcmp(mapping->name, "Expenditure Constants") == 0 || strcmp(mapping->name, "Priority Budget") == 0 || strcmp(mapping->name, "subsidy_percentage") == 0) {
           dimIndex = 4; // expenditure
-        } else {
+        } 
+        else {
           dimIndex = 0; // member (default for most 1D arrays)
         }
       } else {
@@ -255,7 +256,7 @@ static size_t parseCINFile(const char* cinFilePath, double** constantValues, int
         if (i == 0) {
           dimIndex = 0; // member
         } else {
-          if (strcmp(mapping->name, "disease_state_duration") == 0) {
+          if (strcmp(mapping->name, "Disease State Duration") == 0) {
             dimIndex = 5; // dsd
           } else {
             dimIndex = 6; // dws (for disability_weights_state and disease expenditure constants)
@@ -723,20 +724,28 @@ int main(int argc, char** argv) {
         }
       }
     } else {
-      // Write a header for output data.
-      printf("%s\n", getHeader());
-      // Write tab-delimited output data, one line per output time step.
-      for (size_t t = 0; t < numSavePoints; t++) {
-        for (size_t v = 0; v < numOutputs; v++) {
-          // Output buffer is organized by variable (each variable has numSavePoints values)
+      // Transposed output: parse header for variable names
+      const char* header = getHeader();
+      char* headerCopy = strdup(header);
+      char* names[1024];  // Assuming max 1024 outputs; adjust if needed
+      size_t nameIndex = 0;
+      char* token = strtok(headerCopy, "\t");
+      while (token && nameIndex < numOutputs) {
+        names[nameIndex++] = token;
+        token = strtok(NULL, "\t");
+      }
+
+      // Print one row per variable
+      for (size_t v = 0; v < numOutputs; v++) {
+        printf("%s", names[v]);
+        for (size_t t = 0; t < numSavePoints; t++) {
           double value = outputBuffer[v * numSavePoints + t];
-          if (v > 0) {
-            printf("\t");
-          }
-          printf("%g", value);
+          printf("\t%g", value);
         }
         printf("\n");
       }
+
+      free(headerCopy);
     }
   }
 
