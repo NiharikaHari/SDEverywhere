@@ -10,6 +10,6 @@ ifeq ($(UNAME_S),Linux)
     LDLIBS+= -lm
 endif
 
-CC=clang
+CC=gcc
 
 $(P): $(OBJECTS) $P.o

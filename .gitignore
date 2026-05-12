@@ -1,4 +1,7 @@
 # SDEverywhere intermediate files
+my-models/**
+launch.json
+
 models/**/build*
 models/**/output*
 models/**/compare

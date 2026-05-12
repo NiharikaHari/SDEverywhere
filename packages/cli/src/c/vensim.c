@@ -579,8 +579,6 @@ double* _ALLOCATE_BY_PRIORITY(
 
   static double out_return[ALLOCATE_BY_PRIORITY_BUFSIZE];
 
-  fprintf(stderr, request_quantities);
-
   // Remove request 0 targets and order by priority
   bool is_0[ALLOCATE_BY_PRIORITY_BUFSIZE];
   size_t idx[ALLOCATE_BY_PRIORITY_BUFSIZE];
@@ -725,10 +723,8 @@ double* _ALLOCATE_BY_PRIORITY(
     out_return[idx[i]] = out[i];
   }
 
-  fprintf(stderr, out_return);
   return out_return;
-
-
+  
 }
 
 //

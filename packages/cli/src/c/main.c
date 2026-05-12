@@ -36,58 +36,58 @@ static const LookupVariableMapping loopkupVariableMappings[] = {
 
 // Variable mappings from setConstant function
 static const VariableMapping variableMappings[] = {
-  {"Education Inflation", 1, 0, NULL},
-  {"Income Increase", 2, 0, NULL},
+  {"Education Inflation %", 1, 0, NULL},
+  {"Income Increase %", 2, 0, NULL},
   {"Assets", 3, 0, NULL},
   {"Avg Pregnancy Cost", 4, 0, NULL},
   {"Bank Interest Rate", 5, 1, NULL}, // bank dimension
   {"Borrowing Value", 6, 1, NULL}, // loan_types dimension
   {"Borrowings", 7, 1, NULL}, // loan_types dimension
-  {"calorie_content_food", 8, 1, NULL}, // food_groups dimension
+  {"Calorie Content Food", 8, 1, NULL}, // food_groups dimension
   {"Cash Transfer", 9, 0, NULL},
   {"Check", 10, 2, NULL}, // member x dws dimensions
   {"Cost of Food Constants", 11, 1, NULL}, // food_groups dimension
-  {"deposits", 12, 1, NULL}, // bank dimension
+  {"Deposits", 12, 1, NULL}, // bank dimension
   {"Disability Weights State", 13, 2, NULL}, // member x dws dimensions
   {"Disease Hospital Expenditure Demand Constants", 14, 2, NULL}, // member x dws dimensions
   {"Disease Medicine Expenditure Demand Constants", 15, 2, NULL}, // member x dws dimensions
   {"Disease State Duration", 16, 2, NULL}, // member x dsd dimensions
-  {"education_subsidy", 17, 0, NULL},
+  {"Education Subsidy", 17, 0, NULL},
   {"Expenditure Constants", 18, 1, NULL}, // expenditure dimension
   {"FINAL TIME", 19, 0, NULL},
   {"Food Exp Demand Multiplier", 20, 0, NULL},
   {"Food Inflation", 21, 0, NULL},
   {"Gender", 22, 1, NULL}, // member dimension
-  {"gratuity_multiplier", 23, 0, NULL},
+  {"Gratuity Multiplier", 23, 0, NULL},
   {"Health Expenditure Demand Constants", 24, 1, NULL}, // member dimension
-  {"health_insurance_coverage", 25, 0, NULL},
-  {"household_income", 26, 0, NULL},
-  {"initial_time", 27, 0, NULL},
+  {"Health Insurance Coverage", 25, 0, NULL},
+  {"Household Income", 26, 0, NULL},
+  {"INITIAL TIME", 27, 0, NULL},
   {"Income Quantum", 28, 1, NULL}, // member dimension
-  {"increase_in_age", 29, 0, NULL},
+  {"Increase in Age", 29, 0, NULL},
   {"Initial Age", 30, 1, NULL}, // member dimension
   {"Initial Bank Savings", 31, 1, NULL}, // bank dimension
   {"Initial Education", 32, 1, NULL}, // member dimension
-  {"initial_savings", 33, 0, NULL},
+  {"Initial Savings", 33, 0, NULL},
   {"Interest Rate", 34, 1, NULL}, // loan_types dimension
   {"Loan Amount", 35, 0, NULL},
-  {"Loan Emi Constants", 36, 1, NULL}, // loan_types dimension
-  {"medical_subsidy", 37, 0, NULL},
-  {"nutrition_subsidy", 38, 0, NULL},
-  {"other_inflation", 39, 0, NULL},
-  {"pregnant_member", 40, 1, NULL}, // member dimension
+  {"Loan EMI Constants", 36, 1, NULL}, // loan_types dimension
+  {"Medical Subsidy", 37, 0, NULL},
+  {"Nutrition Subsidy", 38, 0, NULL},
+  {"Other Inflation", 39, 0, NULL},
+  {"Pregnant Member", 40, 1, NULL}, // member dimension
   {"Priority Budget", 41, 1, NULL}, // expenditure dimension
-  {"priority_food", 42, 1, NULL}, // food_groups dimension
-  {"priority_health", 43, 1, NULL}, // member dimension
-  {"priority_loan", 44, 1, NULL}, // loan_types dimension
-  {"priority_member", 45, 1, NULL}, // member dimension
-  {"rent_subsidy", 46, 0, NULL},
+  {"Priority Food", 42, 1, NULL}, // food_groups dimension
+  {"Priority Health", 43, 1, NULL}, // member dimension
+  {"Priority Loan", 44, 1, NULL}, // loan_types dimension
+  {"Priority Member", 45, 1, NULL}, // member dimension
+  {"Rent Subsidy", 46, 0, NULL},
   {"School Fees Constants", 47, 1, NULL}, // member dimension
-  {"subsidy_percentage", 48, 1, NULL}, // expenditure dimension
-  {"time_step", 49, 0, NULL},
-  {"transport_subsidy", 50, 0, NULL},
-  {"unemployment_insurance", 51, 0, NULL},
-  {"utilities_subsidy", 52, 0, NULL},
+  {"Subsidy Percentage", 48, 1, NULL}, // expenditure dimension
+  {"TIME STEP", 49, 0, NULL},
+  {"Transport Subsidy", 50, 0, NULL},
+  {"Unemployment Insurance", 51, 0, NULL},
+  {"Utilities Subsidy", 52, 0, NULL},
   {"width", 53, 0, NULL},
   {"time", 59, 0, NULL},
   {NULL, 0, 0, NULL} // Sentinel
@@ -241,11 +241,11 @@ static size_t parseCINFile(const char* cinFilePath, double** constantValues, int
         if (strcmp(mapping->name, "Bank Interest Rate") == 0 || strcmp(mapping->name, "Deposits") == 0 || strcmp(mapping->name, "Initial Bank Savings") == 0) {
           dimIndex = 1; // bank
         } else if (strcmp(mapping->name, "Borrowing Value") == 0 || strcmp(mapping->name, "Borrowings") == 0 || strcmp(mapping->name, "Debt Multiplier") == 0 ||
-                   strcmp(mapping->name, "Interest Rate") == 0 || strcmp(mapping->name, "Loan Emi Constants") == 0 || strcmp(mapping->name, "Priority Loan") == 0) {
+                   strcmp(mapping->name, "Interest Rate") == 0 || strcmp(mapping->name, "Loan EMI Constants") == 0 || strcmp(mapping->name, "Priority Loan") == 0) {
           dimIndex = 2; // loan_types
-        } else if (strcmp(mapping->name, "calorie_content_food") == 0 || strcmp(mapping->name, "Cost of Food Constants") == 0 || strcmp(mapping->name, "priority_food") == 0) {
+        } else if (strcmp(mapping->name, "Calorie Content Food") == 0 || strcmp(mapping->name, "Cost of Food Constants") == 0 || strcmp(mapping->name, "Priority Food") == 0) {
           dimIndex = 3; // food_groups
-        } else if (strcmp(mapping->name, "Expenditure Constants") == 0 || strcmp(mapping->name, "Priority Budget") == 0 || strcmp(mapping->name, "subsidy_percentage") == 0) {
+        } else if (strcmp(mapping->name, "Expenditure Constants") == 0 || strcmp(mapping->name, "Priority Budget") == 0 || strcmp(mapping->name, "Subsidy Percentage") == 0) {
           dimIndex = 4; // expenditure
         } 
         else {
@@ -506,6 +506,11 @@ static size_t parseLookupCSV(
 
     // Read remaining tokens (values)
     while ((token = strtok_r(NULL, ",", &lineTokenPtr))) {
+      if (numPoints >= 50000) {
+        fprintf(stderr, "Too many lookup points\n");
+        break;
+      }
+
       tempPoints[numPoints++] = atof(token);
     }
 
@@ -520,7 +525,7 @@ static size_t parseLookupCSV(
     // -----------------------------
 
     // Grow values buffer if needed
-    while (valOffset + numPoints >= valCapacity) {
+    while (valOffset + (2 * numPoints) >= valCapacity) {
       valCapacity *= 2;
     }
     *lookupValues = realloc(*lookupValues, valCapacity * sizeof(double));
